@@ -1,8 +1,4 @@
-import { CompilationContext } from '../compilation';
-
-import { join, block, wrap, indent } from '../utilities/printing';
-
-import { camelCase } from 'change-case';
+import { CompilationContext } from '../compiler/legacyIR';
 
 import {
   GraphQLType,
@@ -17,7 +13,8 @@ import {
   GraphQLEnumType,
   GraphQLCompositeType,
   isCompositeType,
-  isAbstractType
+  isAbstractType,
+  GraphQLObjectType
 } from 'graphql';
 
 const builtInScalarMap = {
@@ -28,7 +25,7 @@ const builtInScalarMap = {
   [GraphQLID.name]: 'GraphQLID'
 };
 
-export function possibleTypesForType(context: CompilationContext, type: GraphQLCompositeType) {
+export function possibleTypesForType(context: CompilationContext, type: GraphQLCompositeType): GraphQLObjectType[] {
   if (isAbstractType(type)) {
     return context.schema.getPossibleTypes(type);
   } else {

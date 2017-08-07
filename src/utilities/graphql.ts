@@ -4,7 +4,6 @@ import {
   Kind,
   TypeInfo,
   isEqualType,
-  isTypeSubTypeOf,
   isAbstractType,
   SchemaMetaFieldDef,
   TypeMetaFieldDef,
@@ -13,7 +12,6 @@ import {
   GraphQLObjectType,
   GraphQLInterfaceType,
   GraphQLUnionType,
-  GraphQLEnumType,
   GraphQLString,
   GraphQLInt,
   GraphQLFloat,
@@ -27,8 +25,6 @@ import {
   SelectionSetNode,
   Location,
   ValueNode,
-  IntValueNode,
-  FloatValueNode,
   OperationDefinitionNode,
   FieldNode,
   GraphQLField,
@@ -75,7 +71,7 @@ export function filePathForNode(node: ASTNode): string | undefined {
   return (name === "GraphQL") ? undefined : name;
 }
 
-export function valueFromValueNode(valueNode: ValueNode): any {
+export function valueFromValueNode(valueNode: ValueNode): any | { kind: 'Variable', variableName: string } {
   switch (valueNode.kind) {
     case 'IntValue':
     case 'FloatValue':
@@ -98,6 +94,10 @@ export function valueFromValueNode(valueNode: ValueNode): any {
 
 export function isTypeProperSuperTypeOf(schema: GraphQLSchema, maybeSuperType: GraphQLCompositeType, subType: GraphQLCompositeType) {
   return isEqualType(maybeSuperType, subType) || subType instanceof GraphQLObjectType && (isAbstractType(maybeSuperType) && schema.isPossibleType(maybeSuperType, subType));
+}
+
+export function isMetaFieldName(name: string) {
+  return name.startsWith('__');
 }
 
 // Utility functions extracted from graphql-js
